@@ -74,6 +74,28 @@ Reading Methods
    :return bytes: the given line
 
 
+.. comethod:: StreamReader.readuntil(separator=b'\n')
+
+   Read data from the stream until ``separator`` is found.
+
+   On success, the data and separator will be removed from the
+   internal buffer (consumed). Returned data will include the
+   separator at the end.
+
+   Configured stream limit is used to check result. Limit sets the
+   maximal length of data that can be returned, not counting the
+   separator.
+
+   If an EOF occurs and the complete separator is still not found, an
+   ``asyncio.IncompleteReadError`` exception will be raised, and the
+   internal buffer will be reset.  The IncompleteReadError.partial
+   attribute may contain the separator partially.
+
+   If the data cannot be read because of over limit, a
+   LimitOverrunError exception  will be raised, and the data
+   will be left in the internal buffer, so it can be read again.
+
+
 Asynchronous Iteration Support
 ------------------------------
 
