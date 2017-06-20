@@ -4,7 +4,7 @@ Changes
 2.3.0 (2017-xx-xx)
 ------------------
 
--
+- Add `app.router.add_options()` shortcut
 
 -
 

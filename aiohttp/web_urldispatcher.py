@@ -890,6 +890,12 @@ class UrlDispatcher(AbstractRouter, collections.abc.Mapping):
         """
         return self.add_route(hdrs.METH_DELETE, path, handler, **kwargs)
 
+    def add_options(self, path, handler, **kwargs):
+        """
+        Shortcut for add_route with method OPTIONS
+        """
+        return self.add_route(hdrs.METH_OPTIONS, path, handler, **kwargs)
+
     def freeze(self):
         super().freeze()
         for resource in self._resources:

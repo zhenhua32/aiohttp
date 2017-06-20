@@ -1538,6 +1538,13 @@ Router is any object that implements :class:`AbstractRouter` interface.
 
       .. versionadded:: 1.0
 
+   .. method:: add_options(path, handler, **kwargs)
+
+      Shortcut for adding a OPTIONS handler. Calls the :meth:`add_route` with \
+      ``method`` equals to ``'OPTIONS'``.
+
+      .. versionadded:: 2.3.0
+
    .. method:: add_static(prefix, path, *, name=None, expect_handler=None, \
                           chunk_size=256*1024, \
                           response_factory=StreamResponse, \

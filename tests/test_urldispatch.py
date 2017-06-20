@@ -156,6 +156,18 @@ def test_add_route_with_add_patch_shortcut(router):
 
 
 @asyncio.coroutine
+def test_add_route_with_add_options_shortcut(router):
+    handler = make_handler()
+    router.add_patch('/handler/to/path', handler)
+    req = make_request('OPTIONS', '/handler/to/path')
+    info = yield from router.resolve(req)
+    assert info is not None
+    assert 0 == len(info)
+    assert handler is info.handler
+    assert info.route.name is None
+
+
+@asyncio.coroutine
 def test_add_route_with_add_delete_shortcut(router):
     handler = make_handler()
     router.add_delete('/handler/to/path', handler)
