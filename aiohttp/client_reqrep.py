@@ -142,7 +142,7 @@ class ClientRequest:
 
     @property
     def host(self):
-        return self.url.host
+        return self.url.raw_host
 
     @property
     def port(self):
