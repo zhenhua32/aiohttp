@@ -92,7 +92,8 @@ class RequestHandler(asyncio.streams.FlowControlMixin, asyncio.Protocol):
                  max_headers=32768,
                  max_field_size=8190,
                  lingering_time=10.0,
-                 max_concurrent_handlers=1):
+                 max_concurrent_handlers=1,
+                 cancellation_policy=True):
 
         super().__init__(loop=loop)
 
@@ -115,6 +116,7 @@ class RequestHandler(asyncio.streams.FlowControlMixin, asyncio.Protocol):
         self._error_handler = None
         self._request_handlers = []
         self._max_concurrent_handlers = max_concurrent_handlers
+        self._cancellation_policy = cancellation_policy
 
         self._upgrade = False
         self._payload_parser = None
@@ -157,6 +159,13 @@ class RequestHandler(asyncio.streams.FlowControlMixin, asyncio.Protocol):
     @property
     def keepalive_timeout(self):
         return self._keepalive_timeout
+
+    @property
+    def cancellation_policy(self):
+        return self._cancellation_policy
+
+    def set_cancellation_policy(self, cancellation):
+        self._cancellation_policy = cancellation
 
     async def shutdown(self, timeout=15.0):
         """Worker process is about to exit, we need cleanup everything and
