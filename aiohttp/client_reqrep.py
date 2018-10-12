@@ -19,7 +19,8 @@ from .client_exceptions import (ClientConnectionError, ClientOSError,
                                 ClientResponseError, ContentTypeError,
                                 InvalidURL, ServerFingerprintMismatch)
 from .formdata import FormData
-from .helpers import PY_36, HeadersMixin, TimerNoop, noop, reify, set_result
+from .helpers import (PY_36, HeadersMixin, TimerNoop, get_running_loop, noop,
+                      reify, set_result)
 from .http import SERVER_SOFTWARE, HttpVersion10, HttpVersion11, StreamWriter
 from .log import client_logger
 from .streams import StreamReader  # noqa
@@ -195,10 +196,6 @@ class ClientRequest:
                  ssl=None,
                  proxy_headers=None,
                  traces=None):
-
-        if loop is None:
-            loop = asyncio.get_event_loop()
-
         assert isinstance(url, URL), url
         assert isinstance(proxy, (URL, type(None))), proxy
         self._session = session
@@ -212,13 +209,13 @@ class ClientRequest:
         self.method = method.upper()
         self.chunked = chunked
         self.compress = compress
-        self.loop = loop
+        self.loop = get_running_loop(loop)
         self.length = None
         self.response_class = response_class or ClientResponse
         self._timer = timer if timer is not None else TimerNoop()
         self._ssl = ssl
 
-        if loop.get_debug():
+        if self.loop.get_debug():
             self._source_traceback = traceback.extract_stack(sys._getframe(1))
 
         self.update_version(version)

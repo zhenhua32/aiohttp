@@ -11,6 +11,7 @@ import os
 import re
 import sys
 import time
+import warnings
 import weakref
 from collections import namedtuple
 from contextlib import suppress
@@ -594,6 +595,16 @@ class HeadersMixin:
             return int(content_length)
         else:
             return None
+
+
+def get_running_loop(loop: Optional[asyncio.AbstractEventLoop]=None
+) -> asyncio.AbstractEventLoop:  # noqa
+    if loop is None:
+        loop = asyncio.get_event_loop()
+    if loop.is_running():
+        warnings.warn("The object should be created from async function",
+                      DeprecationWarning, stacklevel=3)
+    return loop
 
 
 def set_result(fut: 'asyncio.Future[_T]', result: _T) -> None:
