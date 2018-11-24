@@ -10,7 +10,7 @@ language: python
 
 python:
 - 3.6
-- &mainstream_python 3.7
+- &py37 3.7
 - 3.7-dev
 - nightly
 - &pypy3 pypy3.5
@@ -30,7 +30,7 @@ after_success:
 
 _helpers:
 - &_mainstream_python_base
-  python: *mainstream_python
+  python: *py37
 - &_reset_steps
   env: {}
   before_install: skip
@@ -231,11 +231,11 @@ jobs:
       <<: *env_osx_base
       PYTHON_VERSION: *py36
   - <<: *osx_python_base
-    python: *mainstream_python
+    python: *py37
     env:
       PYTHON_VERSION: 3.7-dev
   - <<: *osx_python_base
-    python: &py37 *mainstream_python
+    python: *py37
     env: &osx_env_py37
       <<: *env_osx_base
       PYTHON_VERSION: *py37
