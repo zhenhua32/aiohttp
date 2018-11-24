@@ -32,7 +32,7 @@ _helpers:
 - &_mainstream_python_base
   python: *mainstream_python
 - &_reset_steps
-  env: []
+  env: {}
   before_install: skip
   install: skip
   script: skip
@@ -59,10 +59,14 @@ _helpers:
   os: osx
   language: generic
   python: *pypy3
-  env:
-  - &env_pypy3 PYTHON_VERSION=pypy3.5-5.10.0
-  - &env_pyenv PYENV_ROOT="$HOME/.pyenv"
-  - &env_path PATH="$PYENV_ROOT/bin:$PATH"
+  env: &env_pyenv_base
+    PYTHON_VERSION: *pypy3
+    PATH: ${PYENV_ROOT}/bin:${PATH}
+  env: &env_osx_base
+    <<: *env_pyenv_base
+    PYTHON_VERSION: &py36 3.6.6
+    MACOSX_DEPLOYMENT_TARGET: 10.6
+    PYTHON_CONFIGURE_OPTS: "'--enable-universalsdk=/ --with-universal-archs=intel'"
   before_install: &install-from-pyenv
   - brew update
   - brew install pyenv || brew upgrade pyenv
@@ -131,10 +135,8 @@ _helpers:
   osx_image: xcode7.3
   script: skip
   after_success: []
-  env:
-  - &env_py36 PYTHON_VERSION=3.6.3
-  - *env_pyenv
-  - *env_path
+  env: &env_py36_common
+    PYTHON_VERSION: 3.6.3
   deploy:
     <<: *deploy_step
     skip_cleanup: false
@@ -143,18 +145,16 @@ _helpers:
   <<: *osx_pypi_deploy_base_1011
   name: &env_os1012_msg Build and deploy to PYPI of OS X 10.12 binary wheel
   osx_image: xcode8.1
-  env:
-  - *env_py36
-  - *env_pyenv
-  - *env_path
+  env: *env_py36_common
 - &osx_pypi_deploy_base_1010
   <<: *osx_pypi_deploy_base_1011
   name: &env_os1010_msg Build and deploy to PYPI of OS X 10.10 binary wheel
   osx_image: xcode6.4
-  env:
-  - *env_py36
-  - *env_pyenv
-  - *env_path
+  env: *env_py36_common
+
+env:
+  global:
+    PYENV_ROOT: ${HOME}/.pyenv
 
 os: linux
 
@@ -220,30 +220,25 @@ jobs:
     - LC_ALL=C sort -c CONTRIBUTORS.txt
 
   - <<: *osx_python_base
-    python: 3.5.3
-    env:
-    - &env_py35 PYTHON_VERSION=3.5.3
-    - *env_pyenv
-    - *env_path
-    - PYTEST_ADDOPTS=-n0
+    python: &py35 3.5.3
+    env: &osx_env_py35
+      <<: *env_osx_base
+      PYTHON_VERSION: *py35
+      PYTEST_ADDOPTS: -n0
+  - <<: *osx_python_base
+    python: *py36
+    env: &osx_env_py36
+      <<: *env_osx_base
+      PYTHON_VERSION: *py36
   - <<: *osx_python_base
     python: *mainstream_python
     env:
-    - *env_py36
-    - *env_pyenv
-    - *env_path
+      PYTHON_VERSION: 3.7-dev
   - <<: *osx_python_base
-    python: *mainstream_python
-    env:
-    - PYTHON_VERSION=3.6-dev
-    - *env_pyenv
-    - *env_path
-  - <<: *osx_python_base
-    python: 3.7
-    env:
-    - &env_py37 PYTHON_VERSION=3.7.0
-    - *env_pyenv
-    - *env_path
+    python: &py37 *mainstream_python
+    env: &osx_env_py37
+      <<: *env_osx_base
+      PYTHON_VERSION: *py37
   # pypy3.5-5.10.0 fails under OS X because it's unsupported
 
   # Build and deploy manylinux1 binary wheels and source distribution
@@ -264,64 +259,40 @@ jobs:
     # Build and deploy MacOS binary wheels for each OSX+Python combo possible
     # OS X 10.10, Python 3.5
   - <<: *osx_pypi_deploy_base_1010
-    python: 3.5
-    env:
-    - *env_py35
-    - *env_pyenv
-    - *env_path
-    - PYTEST_ADDOPTS=-n0
+    python: *py35
+    env: *osx_env_py35
     # OS X 10.10, Python 3.6
   - <<: *osx_pypi_deploy_base_1010
-    env:
-    - *env_py36
-    - *env_pyenv
-    - *env_path
+    python: *py36
+    env: *osx_env_py36
     # OS X 10.10, Python 3.7
   - <<: *osx_pypi_deploy_base_1010
-    env:
-    - *env_py37
-    - *env_pyenv
-    - *env_path
+    python: *py37
+    env: *osx_env_py37
     # OS X 10.11, Python 3.5
   - <<: *osx_pypi_deploy_base_1011
-    python: 3.5
-    env:
-    - *env_py35
-    - *env_pyenv
-    - *env_path
-    - PYTEST_ADDOPTS=-n0
+    python: *py35
+    env: *osx_env_py35
     # OS X 10.11, Python 3.6
   - <<: *osx_pypi_deploy_base_1011
-    env:
-    - *env_py36
-    - *env_pyenv
-    - *env_path
+    python: *py36
+    env: *osx_env_py36
     # OS X 10.11, Python 3.7
   - <<: *osx_pypi_deploy_base_1011
-    env:
-    - *env_py37
-    - *env_pyenv
-    - *env_path
+    python: *py37
+    env: *osx_env_py37
     # OS X 10.12, Python 3.5
   - <<: *osx_pypi_deploy_base_1012
-    python: 3.5
-    env:
-    - *env_py35
-    - *env_pyenv
-    - *env_path
-    - PYTEST_ADDOPTS=-n0
+    python: *py35
+    env: *osx_env_py35
     # OS X 10.12, Python 3.6
   - <<: *osx_pypi_deploy_base_1012
-    env:
-    - *env_py36
-    - *env_pyenv
-    - *env_path
+    python: *py36
+    env: *osx_env_py36
     # OS X 10.12, Python 3.7
   - <<: *osx_pypi_deploy_base_1012
-    env:
-    - *env_py37
-    - *env_pyenv
-    - *env_path
+    python: *py37
+    env: *osx_env_py37
 
 stages:
 - *doc_stage_name
