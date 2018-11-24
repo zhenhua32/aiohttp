@@ -244,7 +244,7 @@ jobs:
   # Build and deploy manylinux1 binary wheels and source distribution
   - <<: *generic_deploy_base
     <<: *_reset_steps
-    name: Build and deploy to PYPI of manylinux1 binary wheels for all supported Pythons and source distribution=
+    name: Build and deploy to PYPI of manylinux1 binary wheels for all supported Pythons and source distribution
     dist: trusty
     group: edge
     services:
