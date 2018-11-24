@@ -29,6 +29,9 @@ after_success:
  - codecov
 
 _helpers:
+- &py37 3.7
+- &py37-osx 3.7.1
+#########
 - &_mainstream_python_base
   python: *py37
 - &_reset_steps
@@ -77,8 +80,9 @@ _helpers:
   - &switch_python pyenv shell "$PYTHON_VERSION"
   - &python_version python --version
   before_install: &install-from-python_org
-  - curl -Lo "/tmp/python-${PYTHON_VERSION}.pkg" "https://www.python.org/ftp/python/${PYTHON_VERSION}/python-${PYTHON_VERSION}-macosx10.6.pkg" && sudo installer -pkg "/tmp/python-${PYTHON_VERSION}.pkg" -target / && rm -f "/tmp/python-${PYTHON_VERSION}.pkg"
-  - export PYTHON_VERSION_SHORT=$(echo ${PYTHON_VERSION} | awk -F. '{print$1"."$2}')
+  - PYTHON_VERSION_LONG=$(git ls-remote --tags git://github.com/python/cpython.git | grep -v '\^{}$' | grep -v legacy | awk '{print$2}' | sed 's#refs/tags/v\?##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}" | sort -u | tail -n1)
+  - curl -Lo "/tmp/python-${PYTHON_VERSION_LONG}.pkg" "https://www.python.org/ftp/python/${PYTHON_VERSION_LONG}/python-${PYTHON_VERSION_LONG}-macosx10.6.pkg" && sudo installer -pkg "/tmp/python-${PYTHON_VERSION_LONG}.pkg" -target / && rm -f "/tmp/python-${PYTHON_VERSION_LONG}.pkg"
+  - export PYTHON_VERSION_SHORT=$(echo ${PYTHON_VERSION_LONG} | awk -F. '{print$1"."$2}')
   - export PYTHON_INSTALL_PATH="/Library/Frameworks/Python.framework/Versions/${PYTHON_VERSION_SHORT}"
   - export PYTHON_INSTALL_EXE="${PYTHON_INSTALL_PATH}/bin/python${PYTHON_VERSION_SHORT}"
   - export PATH="${PYTHON_INSTALL_PATH}/bin:${PATH}"
