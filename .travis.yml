@@ -80,13 +80,6 @@ _helpers:
   - &switch_python pyenv shell "$PYTHON_VERSION"
   - &python_version python --version
   before_install: &install-from-python_org
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*"
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | awk '{print$2}'
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | awk '{print$2}' | sed 's#^refs/tags/##;s#^v##'
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | awk '{print$2}' | sed 's#^refs/tags/##;s#^v##' | grep -v '[abcepr]'
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | awk '{print$2}' | sed 's#^refs/tags/##;s#^v##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}"
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | awk '{print$2}' | sed 's#^refs/tags/##;s#^v##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}" | sort -u
-  - git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | awk '{print$2}' | sed 's#^refs/tags/##;s#^v##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}" | sort -u | tail -n1
   - export PYTHON_VERSION_LONG=$(git ls-remote --tags git://github.com/python/cpython.git "${PYTHON_VERSION}*" "v${PYTHON_VERSION}*" | grep -v '\^{}$' | grep -v legacy | awk '{print$2}' | sed 's#^refs/tags/##;s#^v##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}" | sort -u | tail -n1)
   - export PYTHON_VERSION_SHORT=$(echo ${PYTHON_VERSION_LONG} | awk -F. '{print$1"."$2}')
   - echo "Selected version vars are:"
