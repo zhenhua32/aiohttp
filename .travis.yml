@@ -91,7 +91,6 @@ _helpers:
   - export PATH="${PYTHON_INSTALL_PATH}/bin:${PATH}"
   - export PYTHON_VENV_PATH="${HOME}/virtualenv/python${PYTHON_VERSION_SHORT}"
   - export PYTHON_INSTALLER_PATH="${PYTHON_INSTALLER_DIR_PATH}/python-${PYTHON_VERSION_LONG}.pkg"
-  - mkdir -pv "${PYTHON_INSTALLER_DIR_PATH}"
   - env
   - curl -Lo "${PYTHON_INSTALLER_PATH}" -C - "https://www.python.org/ftp/python/${PYTHON_VERSION_LONG}/python-${PYTHON_VERSION_LONG}-macosx10.6.pkg" && sudo installer -pkg "${PYTHON_INSTALLER_PATH}" -target /
   - ls "${PYTHON_INSTALL_PATH}/bin"
