@@ -90,8 +90,11 @@ _helpers:
   - export PYTHON_INSTALL_EXE="${PYTHON_INSTALL_PATH}/bin/python${PYTHON_VERSION_SHORT}"
   - export PATH="${PYTHON_INSTALL_PATH}/bin:${PATH}"
   - export PYTHON_VENV_PATH="${HOME}/virtualenv/python${PYTHON_VERSION_SHORT}"
+  - export PYTHON_INSTALLER_DIR_PATH="${HOME}/.python-installers"
+  - export PYTHON_INSTALLER_PATH="${PYTHON_INSTALLER_DIR_PATH}/python-${PYTHON_VERSION_LONG}.pkg"
+  - mkdir -pv "${PYTHON_INSTALLER_DIR_PATH}"
   - env
-  - curl -Lo "/tmp/python-${PYTHON_VERSION_LONG}.pkg" -C - "https://www.python.org/ftp/python/${PYTHON_VERSION_LONG}/python-${PYTHON_VERSION_LONG}-macosx10.6.pkg" && sudo installer -pkg "/tmp/python-${PYTHON_VERSION_LONG}.pkg" -target / && rm -f "/tmp/python-${PYTHON_VERSION_LONG}.pkg"
+  - curl -Lo "${PYTHON_INSTALLER_PATH}" -C - "https://www.python.org/ftp/python/${PYTHON_VERSION_LONG}/python-${PYTHON_VERSION_LONG}-macosx10.6.pkg" && sudo installer -pkg "${PYTHON_INSTALLER_PATH}" -target /
   - ls "${PYTHON_INSTALL_PATH}/bin"
   - export VENV_CMD=$(command -v virtualenv 2>/dev/null || command -v pyvenv 2>/dev/null || echo "${PYTHON_INSTALL_EXE} -m venv")
   - |
@@ -312,7 +315,14 @@ stages:
   if: tag IS present
 
 
-cache: pip
+cache:
+  pip: true
+  directories:
+  - $HOME/.cache/pre-commit
+  - $HOME/.pre-commit
+  - $HOME/virtualenv/python$(python -c 'import platform; print(platform.python_version())')
+  - $HOME/Library/Caches/Homebrew
+  - $PYTHON_INSTALLER_DIR_PATH
 
 before_cache:
 - rm -f $HOME/.cache/pip/log/debug.log
