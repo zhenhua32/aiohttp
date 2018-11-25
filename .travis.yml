@@ -90,7 +90,6 @@ _helpers:
   - export PYTHON_INSTALL_EXE="${PYTHON_INSTALL_PATH}/bin/python${PYTHON_VERSION_SHORT}"
   - export PATH="${PYTHON_INSTALL_PATH}/bin:${PATH}"
   - export PYTHON_VENV_PATH="${HOME}/virtualenv/python${PYTHON_VERSION_SHORT}"
-  - export PYTHON_INSTALLER_DIR_PATH="${HOME}/.python-installers"
   - export PYTHON_INSTALLER_PATH="${PYTHON_INSTALLER_DIR_PATH}/python-${PYTHON_VERSION_LONG}.pkg"
   - mkdir -pv "${PYTHON_INSTALLER_DIR_PATH}"
   - env
@@ -166,6 +165,7 @@ _helpers:
 env:
   global:
     PYENV_ROOT: ${HOME}/.pyenv
+    PYTHON_INSTALLER_DIR_PATH: ${HOME}/.python-installers
 
 os: linux
 
