@@ -80,14 +80,18 @@ _helpers:
   - &switch_python pyenv shell "$PYTHON_VERSION"
   - &python_version python --version
   before_install: &install-from-python_org
-  - PYTHON_VERSION_LONG=$(git ls-remote --tags git://github.com/python/cpython.git | grep -v '\^{}$' | grep -v legacy | awk '{print$2}' | sed 's#refs/tags/v\?##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}" | sort -u | tail -n1)
-  - curl -Lo "/tmp/python-${PYTHON_VERSION_LONG}.pkg" "https://www.python.org/ftp/python/${PYTHON_VERSION_LONG}/python-${PYTHON_VERSION_LONG}-macosx10.6.pkg" && sudo installer -pkg "/tmp/python-${PYTHON_VERSION_LONG}.pkg" -target / && rm -f "/tmp/python-${PYTHON_VERSION_LONG}.pkg"
+  - export PYTHON_VERSION_LONG=$(git ls-remote --tags git://github.com/python/cpython.git | grep -v '\^{}$' | grep -v legacy | awk '{print$2}' | sed 's#refs/tags/v\?##' | grep -v '[abcepr]' | grep "^${PYTHON_VERSION}" | sort -u | tail -n1)
   - export PYTHON_VERSION_SHORT=$(echo ${PYTHON_VERSION_LONG} | awk -F. '{print$1"."$2}')
+  - echo "Selected version vars are:"
+  - echo "PYTHON_VERSION=${PYTHON_VERSION}"
+  - echo "PYTHON_VERSION_SHORT=${PYTHON_VERSION_SHORT}"
+  - echo "PYTHON_VERSION_LONG=${PYTHON_VERSION_LONG}"
   - export PYTHON_INSTALL_PATH="/Library/Frameworks/Python.framework/Versions/${PYTHON_VERSION_SHORT}"
   - export PYTHON_INSTALL_EXE="${PYTHON_INSTALL_PATH}/bin/python${PYTHON_VERSION_SHORT}"
   - export PATH="${PYTHON_INSTALL_PATH}/bin:${PATH}"
   - export PYTHON_VENV_PATH="${HOME}/virtualenv/python${PYTHON_VERSION_SHORT}"
   - env
+  - curl -Lo "/tmp/python-${PYTHON_VERSION_LONG}.pkg" "https://www.python.org/ftp/python/${PYTHON_VERSION_LONG}/python-${PYTHON_VERSION_LONG}-macosx10.6.pkg" && sudo installer -pkg "/tmp/python-${PYTHON_VERSION_LONG}.pkg" -target / && rm -f "/tmp/python-${PYTHON_VERSION_LONG}.pkg"
   - ls "${PYTHON_INSTALL_PATH}/bin"
   - export VENV_CMD=$(command -v virtualenv 2>/dev/null || command -v pyvenv 2>/dev/null || echo "${PYTHON_INSTALL_EXE} -m venv")
   - |
