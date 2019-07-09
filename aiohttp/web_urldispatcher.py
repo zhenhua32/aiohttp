@@ -148,6 +148,8 @@ class AbstractRoute(abc.ABC):
               issubclass(handler, AbstractView)):
             pass
         else:
+            print(handler)
+            warnings.warn(type(handler), DeprecationWarning)
             warnings.warn("Bare functions are deprecated, "
                           "use async ones", DeprecationWarning)
 
